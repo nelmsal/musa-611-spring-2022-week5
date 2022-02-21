@@ -29,34 +29,41 @@ let showSchoolInfo = (school, marker) => {
 /* PASTE YOUR WEEK4 EXERCISE CODE HERE */
 
 let showPopup = (marker, school) => {
-  let dataFileName = `../data/demographics/${school['UCLS Code']}.json`;
-  const response = fetch(dataFileName)
+  let dataFileName = `../../data/demographics/${school['ULCS Code']}.json`;
+
+  let schoolDemographics = fetch(dataFileName)
     .then(response => response.json())
     .then(
-      data => {
-        console.log(data);
-    });
+      data => {data}
+    );
 
 
   let schoolPub = school['Publication Name'];
-  let popInfo = `<h3>${schoolPub}</h3>`;
+  let pctm = schoolDemographics['MalePCT'];
+  let pctf = schoolDemographics['FemalePCT'];
+
+  let popInfo = `<h3>${schoolPub}</h3>
+    <ul>
+      <li>Percent Male: ${pctm}</li>
+      <li>Percent Female: ${pctf}</li>
+    </ul>`;
   marker.bindPopup(popInfo).openPopup();
 };
 
 let updateSchoolMarkers = (schoolsToShow) => {
   schoolLayer.clearLayers();
-  schoolsToShow.forEach((school) => {
-    const name = school['Publication Name'];
-    const [lat, lng] = school['GPS Location'].split(',');
-    const marker = L.marker([parseFloat(lat), parseFloat(lng)]).bindTooltip(name);
+  schoolsToShow.forEach(function (school) {
+      const name = school['Publication Name'];
+      const [lat, lng] = school['GPS Location'].split(',');
+      const marker = L.marker([parseFloat(lat), parseFloat(lng)]).bindTooltip(name);
 
-    schoolLayer.addLayer(marker);
+      schoolLayer.addLayer(marker);
 
-    marker.addEventListener('click', () => {
-      showPopup(marker, school);
+      marker.addEventListener('click', () => {
+        showPopup(marker, school);
+      });
+
     });
-
-  });
 };
 
 let updateSchoolList = (schoolsToShow) => {
